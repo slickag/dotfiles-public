@@ -290,7 +290,8 @@ function fix_imagemagic() {
 
 function with_dbus() {
   if [[ -z "${DBUS_SESSION_BUS_ADDRESS+X}" ]]; then
-    dbus-launch "$@"
+    export $(dbus-launch)
+    "$@"
   else
     "$@"
   fi
@@ -329,7 +330,7 @@ umask g-w,o-w
 
 install_packages
 install_vscode
-install_ripgrep
+# install_ripgrep
 install_bat
 install_fzf
 install_fonts
