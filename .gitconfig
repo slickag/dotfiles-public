@@ -1,7 +1,6 @@
 [user]
-	name = Roman Perepelitsa
-	email = roman.perepelitsa@gmail.com
-	signingkey = 8B060F8B9EB395614A669F2A90ACE942EB90C3DD
+	name = John Faust
+	email = 45057319+slickag@users.noreply.github.com
 [diff]
 	tool = meld
 [merge]
