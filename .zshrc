@@ -77,7 +77,7 @@ if [[ "$(</proc/version)" == *Microsoft* ]] 2>/dev/null; then
   z4h source ~/dotfiles/ssh-agent.zsh
   HISTFILE=~/.zsh_history.${(%):-%m}-wsl-${HOME:t}
   () {
-    local lines=("${(@f)${$(/mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
+    local lines=("${(@f)${$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
     local keys=(${lines%%=*}) vals=(${lines#*=})
     typeset -gA wenv=(${keys:^vals})
     local home=$wenv[USERPROFILE]
@@ -151,8 +151,8 @@ fi
     "^[2"  "^[3"  "^[4"  "^[5"  "^[6"  "^[7"  "^[8"  "^[9"  "^[<"  "^[>"  "^[?"  "^[A"  "^[B"
     "^[C"  "^[D"  "^[F"  "^[G"  "^[L"  "^[M"  "^[N"  "^[P"  "^[Q"  "^[S"  "^[T"  "^[U"  "^[W"
     "^[_"  "^[a"  "^[b"  "^[c"  "^[d"  "^[f"  "^[g"  "^[l"  "^[n"  "^[p"  "^[q"  "^[s"  "^[t"
-    "^[u"  "^[w"  "^[y"  "^[z"  "^[|"  "^[~"  "^[^I" "^[^J" "^[^L" "^[^M" "^[^_" "^[\"" "^[\$"
-    "^X^B" "^X^F" "^X^J" "^X^K" "^X^N" "^X^O" "^X^R" "^X^U" "^X^X" "^[^D" "^[^G" "^[^H")
+    "^[u"  "^[w"  "^[y"  "^[z"  "^[|"  "^[~"  "^[^I" "^[^J" "^[^L" "^[^_" "^[\"" "^[\$" "^X^B"
+    "^X^F" "^X^J" "^X^K" "^X^N" "^X^O" "^X^R" "^X^U" "^X^X" "^[^D" "^[^G" "^[^H")
   for key in $keys; do
     bindkey $key z4h-do-nothing
   done
