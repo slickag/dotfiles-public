@@ -91,8 +91,11 @@ session-resize-terminal-right='disabled'
 win-reorder-previous-session='disabled'
 session-switch-to-terminal-left='disabled'"
 
-# '1' if running under Windows Subsystem for Linux, '0' otherwise.
-readonly WSL="$(grep -iq Microsoft /proc/version && echo 1 || echo 0)"
+if [[ -n "${WSL_DISTRO_NAME-}" ]]; then
+  readonly WSL=1
+else
+  readonly WSL=0
+fi
 
 # Install a bunch of debian packages.
 function install_packages() {
@@ -195,10 +198,6 @@ function install_bat() {
   rm "$deb"
 }
 
-function install_fzf() {
-  ~/dotfiles/fzf/install --bin
-}
-
 function install_zsh() {
   local v="e9afb3f"
   if [[ -x /usr/local/bin/zsh ]]; then
@@ -268,6 +267,10 @@ function add_to_sudoers() {
   sudo usermod -aG sudo "$USER"
   sudo tee /etc/sudoers.d/"$USER" <<<"$USER ALL=(ALL) NOPASSWD:ALL" >/dev/null
   sudo chmod 440 /etc/sudoers.d/"$USER"
+
+  if (( WSL )) && ! sudo grep -qxF 'Defaults env_keep += WSL_DISTRO_NAME' /etc/sudoers; then
+    sudo tee -a /etc/sudoers >/dev/null <<<'Defaults env_keep += WSL_DISTRO_NAME'
+  fi
 }
 
 function fix_dbus() {
@@ -338,7 +341,6 @@ install_packages
 install_vscode
 # install_ripgrep
 install_bat
-install_fzf
 install_fonts
 
 disable_motd_news

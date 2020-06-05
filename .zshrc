@@ -46,7 +46,7 @@ z4h init || return
 
 setopt glob_dots
 
-ulimit -c $(((8 << 30) / 512))  # 8GB
+ulimit -c $(((4 << 30) / 512))  # 4GB
 
 [[ -d ~/.cargo/bin ]] && path=(~/.cargo/bin $path)
 [[ -d ~/.local/bin ]] && path=(~/.local/bin $path)
@@ -69,17 +69,16 @@ export PAGER=less
 export GOPATH=$HOME/go
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-if [[ "$(</proc/version)" == *Microsoft* ]] 2>/dev/null; then
-  export WSL=1
-  export DISPLAY=:0
+if [[ -n $WSL_DISTRO_NAME ]]; then
   export NO_AT_BRIDGE=1
   export LIBGL_ALWAYS_INDIRECT=1
+  [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
   z4h source ~/dotfiles/ssh-agent.zsh
   HISTFILE=~/.zsh_history.${(%):-%m}-wsl-${HOME:t}
   () {
     local lines=("${(@f)${$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
     local keys=(${lines%%=*}) vals=(${lines#*=})
-    typeset -gA wenv=(${keys:^vals})
+    typeset -grA wenv=(${keys:^vals})
     local home=$wenv[USERPROFILE]
     home=/mnt/${(L)home[1]}/${${home:3}//\\//}
     [[ -d $home ]] && hash -d h=$home
@@ -96,7 +95,6 @@ if [[ "$(</proc/version)" == *Microsoft* ]] 2>/dev/null; then
     alias np="'/mnt/c/Program Files/Notepad++/notepad++.exe'"
   fi
 else
-  export WSL=0
   HISTFILE=~/.zsh_history.${(%):-%m}-linux-${HOME:t}
 fi
 
@@ -116,27 +114,7 @@ TIMEFMT='user=%U system=%S cpu=%P total=%*E'
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 compdef _directories md
 
-function prompt_git_dir() {
-  emulate -L zsh
-  [[ -n $GIT_DIR ]] || return
-  local repo=${GIT_DIR:t}
-  [[ $repo == .git ]] && repo=${GIT_DIR:h:t}
-  [[ $repo == .dotfiles-(public|private) ]] && repo=${repo#.dotfiles-}
-  p10k segment -b 0 -f 208 -t ${repo//\%/%%}
-}
-
-function p10k-on-init() {
-  emulate -L zsh
-  (( POWERLEVEL9K_LEFT_PROMPT_ELEMENTS[(I)git_dir] )) && return
-  local -i vcs=POWERLEVEL9K_LEFT_PROMPT_ELEMENTS[(I)vcs]
-  (( vcs )) || return
-  unset POWERLEVEL9K_VCS_DISABLED_WORKDIR_PATTERN
-  POWERLEVEL9K_LEFT_PROMPT_ELEMENTS[vcs,vcs-1]=(git_dir)
-  [[ -e ~/gitstatus/gitstatus.plugin.zsh ]] && : ${POWERLEVEL9K_GITSTATUS_DIR=~/gitstatus}
-  (( $+functions[p10k] )) && p10k reload
-}
-
-(( $+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS )) && p10k-on-init
+function ssh() { z4h ssh "$@" }
 
 if [[ -e ~/gitstatus/gitstatus.plugin.zsh ]]; then
   : ${GITSTATUS_LOG_LEVEL=DEBUG}
@@ -170,45 +148,6 @@ zstyle ':completion:*:ls:*'                      list-dirs-first    true
 zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
 zstyle ':fzf-tab:*'                              continuous-trigger tab
 
-# export PYENV_ROOT=~/.pyenv
-# path=("$PYENV_ROOT/bin" $path)
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
-
-# export RBENV_ROOT=~/.rbenv
-# path=($HOME/.rbenv/bin $path)
-# eval "$(rbenv init -)"
-
-# export LUAENV_ROOT=~/.luaenv
-# path=($HOME/.luaenv/bin $path)
-# eval "$(luaenv init -)"
-
-# export JENV_ROOT=~/.jenv
-# path=($HOME/.jenv/bin $path)
-# eval "$(jenv init -)"
-
-# export PLENV_ROOT=~/.plenv
-# path=($HOME/.plenv/bin $path)
-# eval "$(plenv init -)"
-
-# export GOENV_ROOT=~/.goenv
-# path=($HOME/.goenv/bin $path)
-# eval "$(goenv init -)"
-# [[ -n $GOROOT ]] && path=($GOROOT/bin $path)
-# [[ -n $GOPATH ]] && path=($path $GOPATH/bin)
-
-# path=($HOME/.nodenv/bin $path)
-# eval "$(nodenv init -)"
-
-# source ~/.asdf/asdf.sh
-# source ~/.asdf/completions/asdf.bash
-
-# path+=(/usr/lib/dart/bin ~/.pub-cache/bin)
-
-# path=($HOME/.ebcli-virtual-env/executables $HOME/.pyenv/versions/3.7.2/bin $path)
-
-# eval "$(direnv hook zsh)"
-
 alias ls="${aliases[ls]:-ls} -A"
 if [[ -n $commands[dircolors] && ${${:-ls}:c:A:t} != busybox* ]]; then
   alias ls="${aliases[ls]:-ls} --group-directories-first"
@@ -216,11 +155,13 @@ fi
 
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
+(( $+commands[rsync] )) && alias rsync='rsync -z'
 
-if (( $+commands[xclip] )); then
+if (( $+commands[xclip] && $#DISPLAY )); then
   alias x='xclip -selection clipboard -in'
   alias v='xclip -selection clipboard -out'
   alias c='xclip -selection clipboard -in -filter'
 fi
 
 [[ ! -e ~/.zshrc-private ]] || source ~/.zshrc-private
+return 0
