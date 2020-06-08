@@ -18,7 +18,8 @@ if [ ! -e "$Z4H"/z4h.zsh ]; then
   mv -- "$Z4H"/z4h.zsh.$$ "$Z4H"/z4h.zsh || return
 fi
 
-[ -n "${ZSH_VERSION-}" ] && HISTFILE=~/.zsh_history.${Z4H_SSH:-${(%):-%m}}
+# [ -n "${ZSH_VERSION-}" ] && HISTFILE=~/.zsh_history.${Z4H_SSH:-${(%):-%m}}
+[ -n "${ZSH_VERSION-}" ] && HISTFILE=~/.zsh_history.${Z4H_SSH:-${(%):-$WSL_DISTRO_NAME}}
 
 . "$Z4H"/z4h.zsh || return
 
