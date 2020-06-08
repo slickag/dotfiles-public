@@ -18,6 +18,8 @@ if [ ! -e "$Z4H"/z4h.zsh ]; then
   mv -- "$Z4H"/z4h.zsh.$$ "$Z4H"/z4h.zsh || return
 fi
 
+[ -n "${ZSH_VERSION-}" ] && HISTFILE=~/.zsh_history.${Z4H_SSH:-${(%):-%m}}
+
 . "$Z4H"/z4h.zsh || return
 
 zstyle ':z4h:'                auto-update      ask
@@ -39,6 +41,8 @@ zstyle ':z4h:autosuggestions' forward-char     partial-accept
 
 z4h install romkatv/archive romkatv/zsh-prompt-benchmark
 
+[[ -e ~/.ssh/id_rsa ]] || : ${GITSTATUS_AUTO_INSTALL:=0}
+
 z4h init || return
 
 setopt glob_dots
@@ -57,7 +61,7 @@ autoload -Uz -- zmv archive unarchive ~/dotfiles/functions/[^_]*(N:t)
 if [[ -x ~/bin/redit ]]; then
   export VISUAL=~/bin/redit
 else
-  export VISUAL=${commands[nano]:-vi}
+  export VISUAL=${${commands[nano]:t}:-vi}
 fi
 
 export EDITOR=$VISUAL
@@ -71,14 +75,13 @@ if [[ "$(</proc/version)" == *[Mm]icrosoft* ]] 2>/dev/null; then
   export LIBGL_ALWAYS_INDIRECT=1
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
   z4h source ~/dotfiles/ssh-agent.zsh
-  HISTFILE=~/.zsh_history.${(%):-%m}-wsl-${HOME:t}
   () {
     local lines=("${(@f)${$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
     local keys=(${lines%%=*}) vals=(${lines#*=})
     typeset -grA wenv=(${keys:^vals})
     local home=$wenv[USERPROFILE]
     home=/mnt/${(L)home[1]}/${${home:3}//\\//}
-    [[ -d $home ]] && hash -d h=$home
+    [[ -d $home ]] && hash -d w=$home
   }
   () {
     emulate -L zsh -o dot_glob -o null_glob
@@ -88,21 +91,13 @@ if [[ "$(</proc/version)" == *[Mm]icrosoft* ]] 2>/dev/null; then
     (( $#files )) || return
     sudo rm -rf -- $files
   }
-  if [[ -x '/mnt/c/Program Files/Notepad++/notepad++.exe' ]]; then
-    alias np="'/mnt/c/Program Files/Notepad++/notepad++.exe'"
-  fi
-else
-  HISTFILE=~/.zsh_history.${(%):-%m}-linux-${HOME:t}
 fi
 
 () {
-  emulate -L zsh
-  setopt extended_glob
   local hist
   for hist in ~/.zsh_history*~$HISTFILE(N); do
     fc -RI $hist
   done
-  [[ -e $HISTFILE ]] && fc -RI $HISTFILE
 }
 
 TIMEFMT='user=%U system=%S cpu=%P total=%*E'
@@ -139,10 +134,16 @@ if (( $+functions[toggle-dotfiles] )); then
   bindkey '^P' toggle-dotfiles
 fi
 
-zstyle ':completion:*'                           sort               false
-zstyle ':completion:*:ls:*'                      list-dirs-first    true
-zstyle ':zle:(up|down)-line-or-beginning-search' leave-cursor       no
-zstyle ':fzf-tab:*'                              continuous-trigger tab
+zstyle ':completion:*'                            sort               false
+zstyle ':completion:*:ls:*'                       list-dirs-first    true
+zstyle ':completion:*:-tilde-:*'                  tag-order          named-directories users
+zstyle ':completion::complete:ssh:argument-1:'    tag-order          hosts users
+zstyle ':completion::complete:scp:argument-rest:' tag-order          hosts files users
+zstyle ':completion:complete:ssh:argument-1'      sort               true
+zstyle ':completion:complete:scp:argument-rest'   sort               true
+zstyle ':completion::complete:(ssh|scp):*:hosts'  hosts
+zstyle ':fzf-tab:*'                               continuous-trigger tab
+zstyle ':zle:(up|down)-line-or-beginning-search'  leave-cursor       no
 
 alias ls="${aliases[ls]:-ls} -A"
 if [[ -n $commands[dircolors] && ${${:-ls}:c:A:t} != busybox* ]]; then

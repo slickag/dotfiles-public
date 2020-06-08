@@ -54,9 +54,16 @@ sudo sh -c 'DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::options::="--force-c
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 
-sudo apt-get install -y git curl zsh
+sudo apt-get install -y git curl
+sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/romkatv/zsh-bin/master/install)" sh -d /usr/local
+if ! grep -qxF '/usr/local/bin/zsh' /etc/shells; then
+  sudo tee -a /etc/shells <<</usr/local/bin/zsh >/dev/null
+fi
+sudo chsh -s /usr/local/bin/zsh "$USER"
+
 tmpdir="$(mktemp -d)"
-git clone --depth=1 -- git@github.com:"$GITHUB_USERNAME"/dotfiles-public.git "$tmpdir"
+GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" \
+  git clone --depth=1 -- git@github.com:"$GITHUB_USERNAME"/dotfiles-public.git "$tmpdir"
 bootstrap="$(<"$tmpdir"/bin/bootstrap-dotfiles.sh)"
 rm -rf -- "$tmpdir"
 bash -c "$bootstrap"
