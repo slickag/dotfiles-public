@@ -195,8 +195,11 @@ function fix_clock() {
 function fix_shm() {
   (( !WSL )) || return 0
   ! grep -qF '# My custom crap' /etc/fstab || return 0
+  sudo mkdir -p /mnt/c /mnt/d
   sudo tee -a /etc/fstab >/dev/null <<<'# My custom crap
-tmpfs /dev/shm tmpfs defaults,rw,nosuid,nodev,size=64g 0 0'
+tmpfs /dev/shm tmpfs defaults,rw,nosuid,nodev,size=64g 0 0
+UUID=F212115212111D63 /mnt/c ntfs-3g nosuid,nodev,uid=0,gid=0,noatime,streams_interface=none,remove_hiberfile,async,lazytime,big_writes 0 0
+UUID=2A680BF9680BC315 /mnt/d ntfs-3g nosuid,nodev,uid=0,gid=0,noatime,streams_interface=none,remove_hiberfile,async,lazytime,big_writes 0 0'
 }
 
 function win_install_fonts() {
@@ -240,6 +243,19 @@ function add_to_sudoers() {
 function fix_dbus() {
   (( WSL )) || return 0
   sudo dbus-uuidgen --ensure
+}
+
+function patch_ssh() {
+  local ssh
+  ssh="$(which ssh)"
+  grep -qF -- 'Warning: Permanently added' "$ssh" || return 0
+  dpkg -s openssh-client | grep -qxF 'Version: 1:8.2p1-4' || return 0
+  local deb
+  deb="$(mktemp)"
+  curl -fsSLo "$deb" \
+    'https://github.com/romkatv/ssh/releases/download/v1.0/openssh-client_8.2p1-4_amd64.deb'
+  sudo dpkg -i "$deb"
+  rm -- "$deb"
 }
 
 # Increase imagemagic memory and disk limits.
@@ -304,6 +320,7 @@ install_vscode
 install_bat
 install_fonts
 
+patch_ssh
 disable_motd_news
 
 fix_clock
