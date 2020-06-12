@@ -9,7 +9,8 @@ function usage() {
   print -r -- 'usage: slurp path...
 
 Create a tar.gz archive from the specified files and directories
-and write it to stdout. Directories are archived recursively.'
+and write it to stdout. If stdout is a tty, write to clipboard.
+Directories are archived recursively.'
 }
 
 () {
@@ -18,10 +19,10 @@ and write it to stdout. Directories are archived recursively.'
   while getopts ":h" opt; do
     case $opt in
       *h) usage; return 0;;
-      \?) print -ru2 "slurp: invalid option: -$OPTARG";;
-      :)  print -ru2 "slurp: missing required argument: -OPTARG";;
-      +?) print -ru2 "slurp: unhandled option: +$opt";;
-      *)  print -ru2 "slurp: unhandled option: -$opt";;
+      \?) print -ru2 "slurp: invalid option: -$OPTARG"; return 1;;
+      :)  print -ru2 "slurp: missing required argument: -OPTARG"; return 1;;
+      +?) print -ru2 "slurp: unhandled option: +$opt"; return 1;;
+      *)  print -ru2 "slurp: unhandled option: -$opt"; return 1;;
     esac
   done
 
@@ -30,7 +31,11 @@ and write it to stdout. Directories are archived recursively.'
     return 1
   fi
 
-  if [[ -t 1 ]]; then
+  if [[ ! -t 1 ]]; then
+    local out=(command cat)
+  elif (( $+commands[xclip] && $#DISPLAY )); then
+    local out=(command xclip -selection clipboard -in)
+  else
     print -ru2 "slurp: refusing to write archive contents to terminal"
     return 1
   fi
@@ -66,7 +71,7 @@ and write it to stdout. Directories are archived recursively.'
       fi
       command ln -s -- $target $tmpdir/${arg:a:t} || return
     done
-    command tar -C $tmpdir -czhf - -- "${@:a:t}" || return
+    command tar -C $tmpdir -czhf - -- "${@:a:t}" | $out || return
   } always {
     zf_rm -rf -- $tmpdir
   }

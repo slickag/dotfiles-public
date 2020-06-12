@@ -109,12 +109,13 @@ function install_packages() {
     curl
     dconf-cli
     dos2unix
-    g++-8
+    g++
     gawk
     gedit
     git
     gzip
     htop
+    jsonnet
     jq
     lftp
     libncurses-dev
@@ -142,9 +143,6 @@ function install_packages() {
   if (( WSL )); then
     packages+=(dbus-x11)
   else
-    # For 20.04: apt-get install -y --no-install-recommends wireguard-tools.
-    sudo add-apt-repository -y ppa:remmina-ppa-team/remmina-next
-    sudo add-apt-repository -y ppa:wireguard/wireguard
     packages+=(gnome-tweak-tool imagemagick iotop tilix remmina wireguard)
   fi
 
@@ -202,7 +200,8 @@ tmpfs /dev/shm tmpfs defaults,rw,nosuid,nodev,size=64g 0 0'
 }
 
 function win_install_fonts() {
-  local dst_dir="$(cmd.exe /c 'echo %LOCALAPPDATA%\Microsoft\Windows\Fonts' 2>/dev/null | sed 's/\r$//')"
+  local dst_dir
+  dst_dir="$(cmd.exe /c 'echo %LOCALAPPDATA%\Microsoft\Windows\Fonts' 2>/dev/null | sed 's/\r$//')"
   dst_dir="$(wslpath "$dst_dir")"
   mkdir -p "$dst_dir"
   local src
@@ -222,7 +221,8 @@ function win_install_fonts() {
 
 # Install a decent monospace font.
 function install_fonts() {
-  (( !WSL )) || win_install_fonts ~/.local/share/fonts/NerdFonts/*.ttf
+  (( WSL )) || return 0
+  win_install_fonts ~/.local/share/fonts/NerdFonts/*.ttf
 }
 
 function add_to_sudoers() {
@@ -242,13 +242,10 @@ function fix_dbus() {
   sudo dbus-uuidgen --ensure
 }
 
-function fix_gcc() {
-  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 8
-  sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 8
-}
-
 # Increase imagemagic memory and disk limits.
 function fix_imagemagic() {
+  # TODO: enable this.
+  return
   (( !WSL )) || return 0
   local cfg=/etc/ImageMagick-6/policy.xml k v kv
   [[ -f "$cfg" ]]
@@ -312,7 +309,6 @@ disable_motd_news
 fix_clock
 fix_shm
 fix_dbus
-fix_gcc
 fix_imagemagic
 
 set_preferences
