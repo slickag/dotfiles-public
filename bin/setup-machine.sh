@@ -127,6 +127,8 @@ function install_packages() {
     p7zip-full
     p7zip-rar
     perl
+    python3
+    python3-pip
     pigz
     tree
     unrar
@@ -152,6 +154,10 @@ function install_packages() {
   sudo apt-get install -y "${packages[@]}"
   sudo apt-get autoremove -y
   sudo apt-get autoclean
+}
+
+function install_b2() {
+  sudo pip3 install --upgrade b2
 }
 
 # Install Visual Studio Code.
@@ -181,6 +187,16 @@ function install_bat() {
   local deb
   deb="$(mktemp)"
   curl -fsSL "https://github.com/sharkdp/bat/releases/download/v${v}/bat_${v}_amd64.deb" > "$deb"
+  sudo dpkg -i "$deb"
+  rm "$deb"
+}
+
+function install_gh() {
+  local v="0.10.0"
+  ! command -v gh &>/dev/null || [[ "$(gh --version)" != */v"$v" ]] || return 0
+  local deb
+  deb="$(mktemp)"
+  curl -fsSL "https://github.com/cli/cli/releases/download/v${v}/gh_${v}_linux_amd64.deb" > "$deb"
   sudo dpkg -i "$deb"
   rm "$deb"
 }
@@ -321,9 +337,11 @@ umask g-w,o-w
 add_to_sudoers
 
 install_packages
+install_b2
 install_vscode
 # install_ripgrep
 install_bat
+install_gh
 install_fonts
 
 patch_ssh
