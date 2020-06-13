@@ -296,8 +296,7 @@ function fix_imagemagic() {
 
 function with_dbus() {
   if [[ -z "${DBUS_SESSION_BUS_ADDRESS+X}" ]]; then
-    export $(dbus-launch)
-    "$@"
+    dbus-run-session -- "$@"
   else
     "$@"
   fi
@@ -339,7 +338,7 @@ add_to_sudoers
 install_packages
 install_b2
 install_vscode
-# install_ripgrep
+install_ripgrep
 install_bat
 install_gh
 install_fonts
