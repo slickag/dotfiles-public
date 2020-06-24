@@ -56,8 +56,7 @@ sudo apt-get autoclean
 
 sudo apt-get install -y curl
 
-DISTRO_VERSION=$(lsb_release -rs)
-if [[ "${DISTRO_VERSION}" == 20.04 ]]; then
+if [[ "$(lsb_release -rs)" == 20.04 ]]; then
   # https://github.com/microsoft/WSL/issues/4898#issuecomment-626186721
   tmpdir="$(mktemp -d)"
   curl -fsSLo "$tmpdir"/libc6_2.31-0ubuntu9_amd64.deb \
