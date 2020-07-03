@@ -1,4 +1,4 @@
-if [ -n "${ZSH_VERSION-}" ]; then
+1if [ -n "${ZSH_VERSION-}" ]; then
   : ${ZDOTDIR:=~}
   setopt no_global_rcs
   if [[ -o no_interactive && -z "${Z4H_BOOTSTRAPPING-}" ]]; then
@@ -6,7 +6,8 @@ if [ -n "${ZSH_VERSION-}" ]; then
   fi
   setopt no_rcs
   unset Z4H_BOOTSTRAPPING
-  [[ -n "$Z4H_SSH" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
+#  [[ -n "$Z4H_SSH" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
+  [[ -n "$Z4H_SSH" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$WSL_DISTRO_NAME:$USER}"
 fi
 
 export XDG_CACHE_HOME="$HOME/.cache"
