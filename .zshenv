@@ -8,7 +8,7 @@ if [ -n "${ZSH_VERSION-}" ]; then
   unset Z4H_BOOTSTRAPPING
 #  [[ -n "$Z4H_SSH" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$WSL_DISTRO_NAME:$USER}"
-  [[ -n $SSH_CONNECTON || $P9K_SSH == 1 ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}:$z4h_ssh_host"
+  [[ -n $Z4H_SSH ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$Z4H_SSH}"
 fi
 
 export XDG_CACHE_HOME="$HOME/.cache"
