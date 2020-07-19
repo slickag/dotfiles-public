@@ -6,9 +6,13 @@ if [ -n "${ZSH_VERSION-}" ]; then
   fi
   setopt no_rcs
   unset Z4H_BOOTSTRAPPING
+<<<<<<< HEAD
 #  [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$WSL_DISTRO_NAME:$USER}"
   [[ -n $Z4H_SSH ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$Z4H_SSH}"
+=======
+  [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
+>>>>>>> upstream/master
 fi
 
 Z4H_URL="https://raw.githubusercontent.com/romkatv/zsh4humans/v3"

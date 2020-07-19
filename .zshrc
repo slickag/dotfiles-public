@@ -46,7 +46,7 @@ if [[ "$(</proc/version)" == *[Mm]icrosoft* ]] 2>/dev/null; then
   export NO_AT_BRIDGE=1
   export LIBGL_ALWAYS_INDIRECT=1
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
-  z4h source ~/dotfiles/ssh-agent.zsh
+  z4h source -c ~/dotfiles/ssh-agent.zsh
   () {
     local lines=("${(@f)${$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
     local keys=(${lines%%=*}) vals=(${lines#*=})
@@ -71,8 +71,6 @@ fi
     fc -RI $hist
   done
 }
-
-TIMEFMT='user=%U system=%S cpu=%P total=%*E'
 
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 compdef _directories md
@@ -105,13 +103,14 @@ fi
     "^[C"  "^[D"  "^[F"  "^[G"  "^[L"  "^[M"  "^[N"  "^[P"  "^[Q"  "^[S"  "^[T"  "^[U"  "^[W"
     "^[_"  "^[a"  "^[b"  "^[c"  "^[d"  "^[f"  "^[g"  "^[l"  "^[n"  "^[p"  "^[q"  "^[s"  "^[t"
     "^[u"  "^[w"  "^[y"  "^[z"  "^[|"  "^[~"  "^[^I" "^[^J" "^[^L" "^[^_" "^[\"" "^[\$" "^X^B"
-    "^X^F" "^X^J" "^X^K" "^X^N" "^X^O" "^X^R" "^X^U" "^X^X" "^[^D" "^[^G" "^[^H")
+    "^X^F" "^X^J" "^X^K" "^X^N" "^X^O" "^X^R" "^X^U" "^X^X" "^[^D" "^[^G")
   for key in $keys; do
     bindkey $key z4h-do-nothing
   done
 }
 
-bindkey '^H' z4h-backward-kill-word
+bindkey '^H'   z4h-backward-kill-word
+bindkey '^[^H' z4h-backward-kill-zword
 
 if (( $+functions[toggle-dotfiles] )); then
   zle -N toggle-dotfiles
@@ -137,6 +136,7 @@ fi
 (( $+commands[tree]  )) && alias tree='tree -aC -I .git --dirsfirst'
 (( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
 (( $+commands[rsync] )) && alias rsync='rsync -z'
+(( $+commands[exa]   )) && alias exa='exa -ga --group-directories-first --time-style=long-iso --color-scale'
 
 if (( $+commands[xclip] && $#DISPLAY )); then
   alias x='xclip -selection clipboard -in'
@@ -149,9 +149,14 @@ if (( $+commands[xclip] && $#DISPLAY )); then
   bindkey '^S' copy-buffer-to-clipboard
 fi
 
-if [[ -n $commands[make] && -x ~/bin/num-cpus ]]; then
-  alias make='make -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
+if [[ -x ~/bin/num-cpus ]]; then
+  if (( $+commands[make] )); then
+    alias make='make -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
+  fi
+  if (( $+commands[cmake] )); then
+    alias cmake='cmake -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
+  fi
 fi
 
-z4h source ~/.zshrc-private
+z4h source -c ~/.zshrc-private
 return 0
