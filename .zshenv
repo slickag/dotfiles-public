@@ -6,12 +6,11 @@ if [ -n "${ZSH_VERSION-}" ]; then
   fi
   setopt no_rcs
   unset Z4H_BOOTSTRAPPING
-#  [[ -n "$Z4H_SSH" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
+#  [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$WSL_DISTRO_NAME:$USER}"
   [[ -n $Z4H_SSH ]] && HISTFILE="$ZDOTDIR/.zsh_history.${(%):-$Z4H_SSH}"
 fi
 
-export XDG_CACHE_HOME="$HOME/.cache"
 Z4H_URL="https://raw.githubusercontent.com/romkatv/zsh4humans/v3"
 : "${Z4H:=${XDG_CACHE_HOME:-$HOME/.cache}/zsh4humans}"
 [ -d ~/zsh4humans/main ] && Z4H_BOOTSTRAP_COMMAND='ln -s ~/zsh4humans/main "$Z4H_PACKAGE_DIR"'
