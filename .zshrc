@@ -1,8 +1,10 @@
 zstyle ':z4h:'                auto-update      ask
 zstyle ':z4h:'                auto-update-days 28
 zstyle ':z4h:*'               channel          testing
-zstyle ':z4h:'                cd-key           alt
 zstyle ':z4h:autosuggestions' forward-char     partial-accept
+zstyle ':z4h:autosuggestions' end-of-line      partial-accept
+zstyle ':z4h:term-title:ssh'  precmd           ${${${Z4H_SSH##*:}//\%/%%}:-%m}': %~'
+zstyle ':z4h:term-title:ssh'  preexec          ${${${Z4H_SSH##*:}//\%/%%}:-%m}': ${1//\%/%%}'
 
 () {
   local var proj
@@ -42,19 +44,12 @@ export PAGER=less
 export GOPATH=$HOME/go
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-if [[ "$(</proc/version)" == *[Mm]icrosoft* ]] 2>/dev/null; then
+if (( $+z4h_win_env )); then
   export NO_AT_BRIDGE=1
   export LIBGL_ALWAYS_INDIRECT=1
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
   z4h source -c ~/dotfiles/ssh-agent.zsh
-  () {
-    local lines=("${(@f)${$(cd /mnt/c && /mnt/c/Windows/System32/cmd.exe /c set)//$'\r'}}")
-    local keys=(${lines%%=*}) vals=(${lines#*=})
-    typeset -grA wenv=(${keys:^vals})
-    local home=$wenv[USERPROFILE]
-    home=/mnt/${(L)home[1]}/${${home:3}//\\//}
-    [[ -d $home ]] && hash -d w=$home
-  }
+  (( $+z4h_win_home )) && hash -d w=$z4h_win_home
   () {
     emulate -L zsh -o dot_glob -o null_glob
     [[ -n $SSH_CONNECTON || $P9K_SSH == 1 ]] && return
@@ -109,26 +104,31 @@ fi
   done
 }
 
-bindkey '^H'   z4h-backward-kill-word
-bindkey '^[^H' z4h-backward-kill-zword
+z4h bindkey z4h-backward-kill-word  Ctrl+Backspace
+z4h bindkey z4h-backward-kill-zword Ctrl+Alt+Backspace
+z4h bindkey z4h-cd-back             Alt+Left
+z4h bindkey z4h-cd-forward          Alt+Right
+z4h bindkey z4h-cd-up               Alt+Up
+z4h bindkey z4h-cd-down             Alt+Down
 
 if (( $+functions[toggle-dotfiles] )); then
   zle -N toggle-dotfiles
-  bindkey '^P' toggle-dotfiles
+  z4h bindkey toggle-dotfiles Ctrl+P
 fi
 
-zstyle ':completion:*'                            sort               false
-zstyle ':completion:*:ls:*'                       list-dirs-first    true
-zstyle ':completion:*:-tilde-:*'                  tag-order          named-directories users
-zstyle ':completion::complete:ssh:argument-1:'    tag-order          hosts users
-zstyle ':completion::complete:scp:argument-rest:' tag-order          hosts files users
-zstyle ':completion:complete:ssh:argument-1'      sort               true
-zstyle ':completion:complete:scp:argument-rest'   sort               true
-zstyle ':completion::complete:(ssh|scp):*:hosts'  hosts
-zstyle ':fzf-tab:*'                               continuous-trigger tab
-zstyle ':zle:(up|down)-line-or-beginning-search'  leave-cursor       no
+zstyle ':fzf-tab:*'                         continuous-trigger tab
+zstyle ':zle:up-line-or-beginning-search'   leave-cursor       no
+zstyle ':zle:down-line-or-beginning-search' leave-cursor       no
 
-zstyle ':z4h'                                     experimental-git-completion true
+zstyle ':completion:*'                      sort               false
+zstyle ':completion:*:ls:*'                 list-dirs-first    true
+zstyle ':completion:*:ssh:argument-1:'      tag-order          hosts users
+zstyle ':completion:*:scp:argument-rest:'   tag-order          hosts files users
+zstyle ':completion:*:ssh:argument-1'       sort               true
+zstyle ':completion:*:scp:argument-rest'    sort               true
+zstyle ':completion:*:(ssh|scp):*:hosts'    hosts
+
+# zstyle ':completion:*' group-name '' && zstyle ':completion:*' format 'Completing "%d":'
 
 alias ls="${aliases[ls]:-ls} -A"
 if [[ -n $commands[dircolors] && ${${:-ls}:c:A:t} != busybox* ]]; then
@@ -160,5 +160,5 @@ if [[ -x ~/bin/num-cpus ]]; then
   fi
 fi
 
-z4h source -c ~/.zshrc-private
-return 0
+z4h source -c -- $ZDOTDIR/.zshrc-private
+z4h compile -- $ZDOTDIR/{.zshenv,.zprofile,.zshrc,.zlogin,.zlogout}

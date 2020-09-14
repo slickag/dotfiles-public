@@ -66,7 +66,7 @@ theme-variant='dark'
 session-name='\${title}'
 use-tabs=true
 new-instance-mode='new-window'
-enable-wide-handle=false
+enable-wide-handle=true
 app-title='\${activeTerminalTitle}'
 quake-hide-headerbar=false
 quake-window-position='top'
@@ -119,10 +119,12 @@ function install_packages() {
     jsonnet
     jq
     lftp
+    libglpk-dev
     libncurses-dev
     libxml2-utils
     man
     meld
+    moreutils
     nano
     openssh-server
     p7zip-full
@@ -191,6 +193,16 @@ function install_ripgrep() {
   local deb
   deb="$(mktemp)"
   curl -fsSL "https://github.com/BurntSushi/ripgrep/releases/download/${v}/ripgrep_${v}_amd64.deb" >"$deb"
+  sudo dpkg -i "$deb"
+  rm "$deb"
+}
+
+function install_jc() {
+  local v="1.13.2"
+  ! command -v jc &>/dev/null || [[ "$(jc -a | jq -r .version)" != "$v" ]] || return 0
+  local deb
+  deb="$(mktemp)"
+  curl -fsSL "https://jc-packages.s3-us-west-1.amazonaws.com/jc-${v}-1.x86_64.deb" >"$deb"
   sudo dpkg -i "$deb"
   rm "$deb"
 }
@@ -286,14 +298,15 @@ function fix_dbus() {
 }
 
 function patch_ssh() {
+  local v='8.2p1-4ubuntu0.1'
   local ssh
   ssh="$(which ssh)"
   grep -qF -- 'Warning: Permanently added' "$ssh" || return 0
-  dpkg -s openssh-client | grep -qxF 'Version: 1:8.2p1-4' || return 0
+  dpkg -s openssh-client | grep -qxF "Version: 1:$v" || return 0
   local deb
   deb="$(mktemp)"
   curl -fsSLo "$deb" \
-    'https://github.com/romkatv/ssh/releases/download/v1.0/openssh-client_8.2p1-4_amd64.deb'
+    "https://github.com/romkatv/ssh/releases/download/v1.0/openssh-client_${v}_amd64.deb"
   sudo dpkg -i "$deb"
   rm -- "$deb"
 }
@@ -377,7 +390,8 @@ add_to_sudoers
 install_packages
 install_b2
 install_vscode
-#install_ripgrep
+install_ripgrep
+install_jc
 install_bat
 install_gh
 install_exa
