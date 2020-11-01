@@ -5,7 +5,6 @@ zstyle ':z4h:autosuggestions' forward-char     partial-accept
 zstyle ':z4h:autosuggestions' end-of-line      partial-accept
 zstyle ':z4h:term-title:ssh'  precmd           ${${${Z4H_SSH##*:}//\%/%%}:-%m}': %~'
 zstyle ':z4h:term-title:ssh'  preexec          ${${${Z4H_SSH##*:}//\%/%%}:-%m}': ${1//\%/%%}'
-zstyle ':z4h:tmux'            start-at-bottom  yes
 
 () {
   local var proj
@@ -71,15 +70,14 @@ fi
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 compdef _directories md
 
-function ssh() { z4h ssh "$@" }
-
+zstyle    ':z4h:ssh:*' enable           yes
 zstyle    ':z4h:ssh:*' ssh-command      command ssh
 zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/bin/slurp' '~/bin/barf'
 # zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}:$z4h_ssh_host)'
 zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}@$z4h_ssh_host)'
 
 function z4h-ssh-configure() {
-  (( z4h_ssh_passthrough )) && return
+  (( z4h_ssh_enable )) || return 0
   local file
 #  for file in $ZDOTDIR/.zsh_history.*:$z4h_ssh_host(N); do
   for file in $ZDOTDIR/.zsh_history.*@$z4h_ssh_host(N); do
@@ -103,7 +101,7 @@ fi
     "^[2"  "^[3"  "^[4"  "^[5"  "^[6"  "^[7"  "^[8"  "^[9"  "^[<"  "^[>"  "^[?"  "^[A"  "^[B"
     "^[C"  "^[D"  "^[F"  "^[G"  "^[L"  "^[M"  "^[N"  "^[P"  "^[Q"  "^[S"  "^[T"  "^[U"  "^[W"
     "^[_"  "^[a"  "^[b"  "^[c"  "^[d"  "^[f"  "^[g"  "^[l"  "^[n"  "^[p"  "^[q"  "^[s"  "^[t"
-    "^[u"  "^[w"  "^[y"  "^[z"  "^[|"  "^[~"  "^[^I" "^[^J" "^[^L" "^[^_" "^[\"" "^[\$" "^X^B"
+    "^[u"  "^[w"  "^[y"  "^[z"  "^[|"  "^[~"  "^[^I" "^[^J" "^[^_" "^[\"" "^[\$" "^X^B"
     "^X^F" "^X^J" "^X^K" "^X^N" "^X^O" "^X^R" "^X^U" "^X^X" "^[^D" "^[^G")
   for key in $keys; do
     bindkey $key z4h-do-nothing
@@ -116,7 +114,6 @@ z4h bindkey z4h-cd-back                         Alt+Left
 z4h bindkey z4h-cd-forward                      Alt+Right
 z4h bindkey z4h-cd-up                           Alt+Up
 z4h bindkey z4h-cd-down                         Alt+Down
-z4h bindkey z4h-clear-screen-and-move-to-bottom Ctrl+L
 
 if (( $+functions[toggle-dotfiles] )); then
   zle -N toggle-dotfiles
