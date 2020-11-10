@@ -390,10 +390,10 @@ add_to_sudoers
 install_packages
 install_b2
 install_vscode
-install_ripgrep
-install_jc
+#install_ripgrep
+#install_jc
 install_bat
-install_gh
+#install_gh
 install_exa
 # install_fonts
 
