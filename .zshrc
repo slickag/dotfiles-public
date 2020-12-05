@@ -28,7 +28,7 @@ z4h install romkatv/archive romkatv/zsh-prompt-benchmark
 z4h init || return
 
 setopt glob_dots magic_equal_subst no_multi_os no_local_loops rm_star_silent rc_quotes rematch_pcre
-setopt glob_star_short no_auto_menu
+setopt glob_star_short
 
 ulimit -c $(((4 << 30) / 512))  # 4GB
 
@@ -79,7 +79,7 @@ compdef _default     open
 
 zstyle    ':z4h:ssh:*' enable           yes
 zstyle    ':z4h:ssh:*' ssh-command      command ssh
-zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/bin/slurp' '~/bin/barf'
+zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/.config/htop/htoprc'
 # zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}:$z4h_ssh_host)'
 zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}@$z4h_ssh_host)'
 
@@ -115,12 +115,12 @@ fi
   done
 }
 
-z4h bindkey z4h-backward-kill-word              Ctrl+Backspace
-z4h bindkey z4h-backward-kill-zword             Ctrl+Alt+Backspace
-z4h bindkey z4h-cd-back                         Alt+Left
-z4h bindkey z4h-cd-forward                      Alt+Right
-z4h bindkey z4h-cd-up                           Alt+Up
-z4h bindkey z4h-cd-down                         Alt+Down
+z4h bindkey z4h-backward-kill-word  Ctrl+Backspace
+z4h bindkey z4h-backward-kill-zword Ctrl+Alt+Backspace
+z4h bindkey z4h-cd-back             Alt+Left
+z4h bindkey z4h-cd-forward          Alt+Right
+z4h bindkey z4h-cd-up               Alt+Up
+z4h bindkey z4h-cd-down             Alt+Down
 
 if (( $+functions[toggle-dotfiles] )); then
   zle -N toggle-dotfiles
