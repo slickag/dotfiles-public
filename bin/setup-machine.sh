@@ -426,7 +426,7 @@ umask g-w,o-w
 add_to_sudoers
 
 install_packages
-install_docker
+#install_docker
 install_brew
 install_b2
 install_vscode
