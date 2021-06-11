@@ -32,4 +32,4 @@
 [alias]
   patch = apply --ignore-space-change --ignore-whitespace
 [init]
-	defaultBranch = master
+  defaultBranch = master
