@@ -166,7 +166,8 @@ function install_packages() {
 }
 
 function install_b2() {
-  sudo pip3 install --upgrade b2
+  # sudo pip3 install --upgrade b2
+  pyenv exec pip3 install --upgrade b2
 }
 
 function install_docker() {
