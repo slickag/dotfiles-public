@@ -12,7 +12,7 @@ zstyle ':z4h:'                  propagate-cwd      yes
 # zstyle :z4h: start-tmux no
 
 if [[ -e ~/.ssh/id_rsa ]]; then
-  zstyle ':z4h:ssh-agent:' start      yes
+  zstyle ':z4h:ssh-agent:' start      no
   zstyle ':z4h:ssh-agent:' extra-args -t 20h
 else
   : ${GITSTATUS_AUTO_INSTALL:=0}
