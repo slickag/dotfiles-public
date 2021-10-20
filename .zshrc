@@ -61,7 +61,7 @@ unset KITTY_SHELL_INTEGRATION
 
 if (( $+z4h_win_env )); then
   export NO_AT_BRIDGE=1
-  export LIBGL_ALWAYS_INDIRECT=1
+  # export LIBGL_ALWAYS_INDIRECT=1
   [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
   (( $+z4h_win_home )) && hash -d w=$z4h_win_home
   () {
