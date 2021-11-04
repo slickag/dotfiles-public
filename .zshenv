@@ -1,3 +1,4 @@
+[ -f '/etc/profile.d/00-wsl2-systemd.sh' ] && emulate sh -c 'source /etc/profile.d/00-wsl2-systemd.sh'
 if [ -n "${ZSH_VERSION-}" ]; then
   : ${ZDOTDIR:=~}
   setopt no_global_rcs
