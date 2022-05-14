@@ -8,8 +8,7 @@ if [ -n "${ZSH_VERSION-}" ]; then
   fi
   setopt no_rcs
   unset Z4H_BOOTSTRAPPING
-#  [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
-   [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}#$USER"
+  [[ -n "${Z4H_SSH-}" ]] || HISTFILE="$ZDOTDIR/.zsh_history.${(%):-%m}"
 fi
 
 Z4H_URL="https://raw.githubusercontent.com/romkatv/zsh4humans/v5"
