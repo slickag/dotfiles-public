@@ -1,14 +1,5 @@
 [[ $- == *i* ]] || return  # non-interactive shell
 
-function gsudo() {
-    local command_line
-    command_line=("$(sh -c 'ps -p $$ -o ppid=' | xargs -I'{}' readlink -f '/proc/{}/exe')")
-    if [ $# -gt 0 ]; then
-        command_line+=("-c" "$*")
-    fi
-    gsudo.exe wsl -d "$WSL_DISTRO_NAME" -e "${command_line[@]}"
-}
-
 HISTCONTROL=ignoreboth
 HISTSIZE=1000000000
 HISTFILESIZE=1000000000
