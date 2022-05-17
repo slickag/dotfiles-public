@@ -67,9 +67,9 @@ export GPG_TTY=$TTY
 export PAGER=less
 export GOPATH=$HOME/go
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
-export HOMEBREW_NO_ANALYTICS=1
-export SYSTEMD_LESS=${LESS}S
-export HOMEBREW_NO_ENV_HINTS=1
+# export HOMEBREW_NO_ANALYTICS=1
+# export SYSTEMD_LESS=${LESS}S
+# export HOMEBREW_NO_ENV_HINTS=1
 export MANOPT=--no-hyphenation
 
 if (( $+z4h_win_env )); then
@@ -189,14 +189,14 @@ if (( $+commands[xclip] && $#DISPLAY )); then
   bindkey '^S' copy-buffer-to-clipboard
 fi
 
-if [[ -x ~/bin/num-cpus ]]; then
-  if (( $+commands[make] )); then
-    alias make='make -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
-  fi
-  if (( $+commands[cmake] )); then
-    alias cmake='cmake -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
-  fi
-fi
+# if [[ -x ~/bin/num-cpus ]]; then
+  # if (( $+commands[make] )); then
+    # alias make='make -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
+  # fi
+  # if (( $+commands[cmake] )); then
+    # alias cmake='cmake -j "${_my_num_cpus:-${_my_num_cpus::=$(~/bin/num-cpus)}}"'
+  # fi
+# fi
 
 POSTEDIT=$'\n\n\e[2A'
 

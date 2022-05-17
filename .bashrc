@@ -1,5 +1,21 @@
-[[ $- == *i* ]] || return  # non-interactive shell
+# /etc/skel/.bashrc
+#
+# This file is sourced by all *interactive* bash shells on startup,
+# including some apparently interactive shells such as scp and rcp
+# that can't tolerate any output.  So make sure this doesn't display
+# anything or bad things will happen !
 
+
+# Test for an interactive shell.  There is no need to set anything
+# past this point for scp and rcp, and it's important to refrain from
+# outputting anything in those cases.
+if [[ $- != *i* ]] ; then
+	# Shell is non-interactive.  Be done now!
+	return
+fi
+
+
+# Put your fun stuff here.
 HISTCONTROL=ignoreboth
 HISTSIZE=1000000000
 HISTFILESIZE=1000000000
@@ -18,14 +34,14 @@ fi
 
 alias diff='diff --color=auto'
 alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
-alias clang-format='clang-format -style=file'
-alias ls='ls --color=auto --group-directories-first'
-alias tree='tree -aC -I .git --dirsfirst'
-alias gedit='gedit &>/dev/null'
+# alias clang-format='clang-format -style=file'
+# alias ls='ls --color=auto --group-directories-first'
+# alias tree='tree -aC -I .git --dirsfirst'
+# alias gedit='gedit &>/dev/null'
 
-alias x='xclip -selection clipboard -in'          # cut to clipboard
-alias v='xclip -selection clipboard -out'         # paste from clipboard
-alias c='xclip -selection clipboard -in -filter'  # copy clipboard
+# alias x='xclip -selection clipboard -in'          # cut to clipboard
+# alias v='xclip -selection clipboard -out'         # paste from clipboard
+# alias c='xclip -selection clipboard -in -filter'  # copy clipboard
 
 if [[ -f /usr/share/bash-completion/bash_completion ]]; then
   source /usr/share/bash-completion/bash_completion
@@ -42,5 +58,22 @@ else
   PS1+='\n\[\033[01;$((31+!$?))m\]\$\[\033[00m\] '  # green/red (success/error) $/# (normal/root)
   PS1+='\[\e]0;\u@\h: \w\a\]'                       # terminal title: user@host: dir
 fi
+
+if [ -d "$HOME/.cargo/bin" ] ; then
+    [ "${PATH#*$HOME/.cargo/bin:}" == "$PATH" ] && export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ] ; then
+    [ "${PATH#*$HOME/.local/bin:}" == "$PATH" ] && export PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -d "$HOME/bin" ] ; then
+    [ "${PATH#*$HOME/bin:}" == "$PATH" ] && export PATH="$HOME/bin:$PATH"
+fi
+
+[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+
+# Eliminate duplicate PATH entries if any.
+# export PATH=$(echo $PATH | awk -v RS=: -v ORS=: '!($0 in a) {a[$0]; print}' | sed -e 's|.*:$||')
 
 PROMPT_DIRTRIM=3
