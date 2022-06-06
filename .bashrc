@@ -59,5 +59,6 @@ fi
 
 # Eliminate duplicate PATH entries if any.
 # export PATH=$(echo $PATH | awk -v RS=: -v ORS=: '!($0 in a) {a[$0]; print}' | sed -e 's|.*:$||')
+export QT_QPA_PLATFORM=wayland
 
 PROMPT_DIRTRIM=3
