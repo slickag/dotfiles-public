@@ -51,6 +51,8 @@ setopt rm_star_silent rc_quotes glob_star_short
 
 ulimit -c $(((4 << 30) / 512))  # 4GB
 
+path+=(~/.dotnet/tools(-/N))
+
 fpath=($Z4H/romkatv/archive $fpath)
 [[ -d ~/dotfiles/functions ]] && fpath=(~/dotfiles/functions $fpath)
 
@@ -137,6 +139,16 @@ z4h bindkey z4h-cd-forward          Alt+Right
 z4h bindkey z4h-cd-up               Alt+Up
 z4h bindkey z4h-fzf-dir-history     Alt+Down
 z4h bindkey z4h-eof                 Ctrl+D
+
+function skip-csi-sequence() {
+  local key
+  while read -sk key && (( $((#key)) < 0x40 || $((#key)) > 0x7E )); do
+    # empty body
+  done
+}
+
+zle -N skip-csi-sequence
+bindkey '\e[' skip-csi-sequence
 
 # TODO: When moving this to z4h, condition it on _z4h_zle.
 setopt ignore_eof
