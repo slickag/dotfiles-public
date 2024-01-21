@@ -88,9 +88,6 @@ fi
   done
 }
 
-function -arith-eval() { print -r -- $(( $@ )) }
-aliases[=]='noglob -arith-eval'
-
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 
 compdef _directories md
@@ -172,6 +169,11 @@ zstyle ':completion:*:ls:*'                  list-dirs-first    true
 zstyle ':completion:*:ssh:argument-1:'       tag-order          hosts users
 zstyle ':completion:*:scp:argument-rest:'    tag-order          hosts files users
 zstyle ':completion:*:(ssh|scp|rdp):*:hosts' hosts
+
+alias '$'=' '
+alias '%'=' '
+
+aliases[=]='noglob arith-eval'
 
 alias ls="${aliases[ls]:-ls} -A"
 if [[ -n $commands[dircolors] && ${${:-ls}:c:A:t} != busybox* ]]; then
