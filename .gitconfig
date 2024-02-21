@@ -10,6 +10,8 @@
 [core]
 	pager = diff-so-fancy | less -RFXMx4
 	untrackedCache = true
+	autocrlf = false
+	filemode = false
 [color]
 	ui = true
 [color "diff-highlight"]
