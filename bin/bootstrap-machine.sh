@@ -57,12 +57,8 @@ sudo sh -c 'DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::options::="--force-c
 sudo apt-get autoremove -y
 sudo apt-get autoclean
 
-sudo apt-get install -y curl
-
-sudo apt-get install -y git
-sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/romkatv/zsh-bin/master/install)" \
-  sh -d /usr/local -e yes
-sudo chsh -s /usr/local/bin/zsh "$USER"
+sudo apt-get install -y curl git zsh
+sudo chsh -s /bin/zsh "$USER"
 
 tmpdir="$(mktemp -d)"
 GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" \
@@ -75,8 +71,8 @@ zsh -fec 'fpath=(~/dotfiles/functions $fpath); autoload -Uz sync-dotfiles; sync-
 
 bash ~/bin/setup-machine.sh
 
-if [[ -f ~/bin/bootstrap-machine-private.sh ]]; then
-  bash ~/bin/bootstrap-machine-private.sh
+if [[ -f ~/bin/bootstrap-machine-private.zsh ]]; then
+  zsh ~/bin/bootstrap-machine-private.zsh
 fi
 
 if [[ -t 0 && -n "${WSL_DISTRO_NAME-}" ]]; then

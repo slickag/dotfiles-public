@@ -103,6 +103,7 @@ function install_packages() {
     ascii
     apt-transport-https
     autoconf
+    bc
     bfs
     bsdutils
     bzip2
@@ -176,7 +177,7 @@ function install_docker() {
     release="$(lsb_release -cs)"
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo apt-key fingerprint 0EBFCD88
-    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu
+    sudo add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu
       $release
       stable"
     sudo apt-get update -y
@@ -295,6 +296,16 @@ function install_bw() {
   rm -rf -- "$tmp"
 }
 
+function install_websocat() {
+  local v="1.12.0"
+  [[ ! -x ~/bin/websocat || "$(~/bin/websocat --version)" != "websocat $v" ]] || return 0
+  local tmp
+  tmp="$(mktemp -- ~/bin/websocat.XXXXXX)"
+  curl -fsSLo "$tmp" "https://github.com/vi/websocat/releases/download/v${v}/websocat.x86_64-unknown-linux-musl"
+  chmod +x -- "$tmp"
+  mv -- "$tmp" ~/bin/websocat
+}
+
 function fix_locale() {
   sudo tee /etc/default/locale >/dev/null <<<'LC_ALL="C.UTF-8"'
 }
@@ -361,7 +372,7 @@ function fix_dbus() {
 }
 
 function patch_ssh() {
-  local v='8.2p1-4ubuntu0.5'
+  local v='8.9p1-3ubuntu0.6'
   local ssh
   ssh="$(which ssh)"
   grep -qF -- 'Warning: Permanently added' "$ssh" || return 0
@@ -461,14 +472,15 @@ install_locale
 install_brew
 install_b2
 install_vscode
-#install_ripgrep
-#install_jc
-#install_bat
-#install_gh
-install_exa
+install_ripgrep
+# install_jc
+install_bat
+install_gh
+# install_exa
 install_fx
 install_nuget
 install_bw
+install_websocat
 # install_fonts
 
 patch_ssh
