@@ -62,3 +62,5 @@ fi
 export QT_QPA_PLATFORM=wayland
 
 PROMPT_DIRTRIM=3
+
+[ -d "$HOME/.cargo" ] && . "$HOME/.cargo/env"
