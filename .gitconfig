@@ -1,14 +1,14 @@
 [user]
 	name = John Faust
 	email = 45057319+slickag@users.noreply.github.com
-[diff]
-	tool = meld
-[merge]
-	tool = meld
-[difftool]
-	prompt = false
+# [diff]
+	# tool = meld
+# [merge]
+	# tool = meld
+# [difftool]
+	# prompt = false
 [core]
-	pager = diff-so-fancy | less -RFXMx4
+	# pager = diff-so-fancy | less -RFXMx4
 	untrackedCache = true
 [color]
 	ui = true
