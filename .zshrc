@@ -11,7 +11,7 @@ zstyle ':z4h:'                  propagate-cwd          yes
 zstyle ':z4h:'                  prompt-height          4
 
 # zstyle ':z4h:direnv'          enable                 yes
-# zstyle ':z4h:'                start-tmux             no
+zstyle ':z4h:'                start-tmux             yes
 # zstyle ':z4h:'                start-tmux             command tmux -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
 
@@ -51,7 +51,7 @@ setopt rm_star_silent rc_quotes glob_star_short
 
 ulimit -c $(((4 << 30) / 512))  # 4GB
 
-path+=(~/.dotnet/tools(-/N) '/mnt/c/Program Files/Microsoft VS Code/bin'(-/N))
+path+=(~/.dotnet/tools(-/N) '/mnt/c/Users/slick/scoop/apps/vscodium/current/bin'(-/N))
 
 fpath=($Z4H/romkatv/archive $fpath)
 [[ -d ~/dotfiles/functions ]] && fpath=(~/dotfiles/functions $fpath)
@@ -96,12 +96,12 @@ compdef _default     open
 zstyle    ':z4h:ssh:*' enable           yes
 zstyle    ':z4h:ssh:*' ssh-command      command ssh
 zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/.config/htop/htoprc'
-zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}@$z4h_ssh_host)'
+zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}꞉$z4h_ssh_host)'
 
 function z4h-ssh-configure() {
   (( z4h_ssh_enable )) || return 0
   local file
-  for file in $ZDOTDIR/.zsh_history.*@$z4h_ssh_host(N); do
+  for file in $ZDOTDIR/.zsh_history.*꞉$z4h_ssh_host(N); do
     (( $+z4h_ssh_send_files[$file] )) && continue
     z4h_ssh_send_files[$file]='"$ZDOTDIR"/'${file:t}
   done
