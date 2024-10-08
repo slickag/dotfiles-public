@@ -36,7 +36,7 @@ fi
 if [[ $TERM == xterm-256color && ! -v ZSH_SCRIPT && ! -v ZSH_EXECUTION_STRING &&
       -z $SSH_CONNECTON && P9K_SSH -ne 1 && -e ~/.ssh/id_rsa && -e /proc/uptime &&
       ! (/tmp/wiped-after-boot -nt /proc/uptime) && -r /proc/version &&
-      "$(</proc/version)" == *Microsoft* ]]; then
+      "$(</proc/version)" == *icrosoft* ]]; then
   print -Pr -- "%F{3}zsh%f: wiping %U/tmp%u ..."
   sudo rm -rf -- /tmp/*(ND)
   : >/tmp/wiped-after-boot
@@ -96,12 +96,14 @@ compdef _default     open
 zstyle    ':z4h:ssh:*' enable           yes
 zstyle    ':z4h:ssh:*' ssh-command      command ssh
 zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/.config/htop/htoprc'
-zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}꞉$z4h_ssh_host)'
+# zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}꞉$z4h_ssh_host)'
+zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}:$z4h_ssh_host)'
 
 function z4h-ssh-configure() {
   (( z4h_ssh_enable )) || return 0
   local file
-  for file in $ZDOTDIR/.zsh_history.*꞉$z4h_ssh_host(N); do
+  # for file in $ZDOTDIR/.zsh_history.*꞉$z4h_ssh_host(N); do
+  for file in $ZDOTDIR/.zsh_history.*:$z4h_ssh_host(N); do
     (( $+z4h_ssh_send_files[$file] )) && continue
     z4h_ssh_send_files[$file]='"$ZDOTDIR"/'${file:t}
   done
