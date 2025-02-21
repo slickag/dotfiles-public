@@ -3,9 +3,9 @@ unset -m '(POWERLEVEL9K_*|DEFAULT_USER)~POWERLEVEL9K_GITSTATUS_DIR'
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time background_jobs context)
 
-if [[ -e ~/.ssh/id_rsa ]]; then
-  POWERLEVEL9K_LEFT_PROMPT_ELEMENTS+=(my_git_dir vcs)
-fi
+# if [[ -e ~/.ssh/id_rsa ]]; then
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS+=(my_git_dir vcs)
+# fi
 
 if (( P9K_SSH )); then
   POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS+=(time)

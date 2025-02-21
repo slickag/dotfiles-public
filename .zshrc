@@ -10,8 +10,8 @@ zstyle ':z4h:'                  term-shell-integration yes
 zstyle ':z4h:'                  propagate-cwd          yes
 zstyle ':z4h:'                  prompt-height          4
 
-# zstyle ':z4h:direnv'          enable                 yes
-# zstyle ':z4h:'                start-tmux             no
+zstyle ':z4h:direnv'          enable                 no
+zstyle ':z4h:'                start-tmux             no
 # zstyle ':z4h:'                start-tmux             command tmux -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
 
@@ -107,11 +107,6 @@ fi
     bindkey $key z4h-do-nothing
   done
 }
-
-if [[ $(command uname) == Darwin ]]; then
-  bindkey "^[[H" beginning-of-line
-  bindkey "^[[F" end-of-line
-fi
 
 z4h bindkey z4h-accept-line         Enter
 z4h bindkey z4h-backward-kill-word  Ctrl+Backspace
