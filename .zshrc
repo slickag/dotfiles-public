@@ -15,12 +15,12 @@ zstyle ':z4h:'                  prompt-height          4
 # zstyle ':z4h:'                start-tmux             command tmux -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
 
-if [[ -e ~/.ssh/id_rsa ]]; then
-  zstyle ':z4h:ssh-agent:' start      yes
-  zstyle ':z4h:ssh-agent:' extra-args -t 20h
-else
-  : ${GITSTATUS_AUTO_INSTALL:=0}
-fi
+# if [[ -e ~/.ssh/id_rsa ]]; then
+  # zstyle ':z4h:ssh-agent:' start      no
+  # zstyle ':z4h:ssh-agent:' extra-args -t 20h
+# else
+  # : ${GITSTATUS_AUTO_INSTALL:=0}
+# fi
 
 () {
   local var proj dir
@@ -33,15 +33,6 @@ fi
   done
 }
 
-if [[ $TERM == xterm-256color && ! -v ZSH_SCRIPT && ! -v ZSH_EXECUTION_STRING &&
-      -z $SSH_CONNECTON && P9K_SSH -ne 1 && -e ~/.ssh/id_rsa && -e /proc/uptime &&
-      ! (/tmp/wiped-after-boot -nt /proc/uptime) && -r /proc/version &&
-      "$(</proc/version)" == *Microsoft* ]]; then
-  print -Pr -- "%F{3}zsh%f: wiping %U/tmp%u ..."
-  sudo rm -rf -- /tmp/*(ND)
-  : >/tmp/wiped-after-boot
-fi
-
 z4h install romkatv/archive romkatv/zsh-prompt-benchmark
 
 z4h init || return
@@ -49,37 +40,26 @@ z4h init || return
 setopt glob_dots magic_equal_subst no_multi_os no_local_loops
 setopt rm_star_silent rc_quotes glob_star_short
 
-ulimit -c $(((4 << 30) / 512))  # 4GB
+# ulimit -c $(((4 << 30) / 512))  # 4GB
 
-path+=(~/.dotnet/tools(-/N) '/mnt/c/Program Files/Microsoft VS Code/bin'(-/N))
+# path+=(~/.dotnet/tools(-/N) '/mnt/c/Program Files/Microsoft VS Code/bin'(-/N))
 
 fpath=($Z4H/romkatv/archive $fpath)
 [[ -d ~/dotfiles/functions ]] && fpath=(~/dotfiles/functions $fpath)
+[[ -d /opt/homebrew/share/zsh-completions ]] && fpath=(/opt/homebrew/share/zsh-completions $fpath)
+[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
-autoload -Uz -- zmv archive lsarchive unarchive ~/dotfiles/functions/[^_]*(N:t)
+autoload -Uz -- zmv archive lsarchive unarchive ~/dotfiles/functions/[^_]*(N:t) /opt/homebrew/share/zsh-completions/*(N:t)
 
-if [[ -x ~/bin/redit ]]; then
-  export VISUAL=~/bin/redit
-else
-  export VISUAL=${${commands[nano]:t}:-vi}
-fi
+export VISUAL=${${commands[nano]:t}:-vi}
 
 export EDITOR=$VISUAL
 export GPG_TTY=$TTY
 export PAGER=less
-export GOPATH=$HOME/go
+[[ -d "$(brew --prefix go)" ]] && export GOPATH=$HOME/go
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export HOMEBREW_NO_ANALYTICS=1
-export SYSTEMD_LESS=${LESS}S
-export HOMEBREW_NO_ENV_HINTS=1
 export MANOPT=--no-hyphenation
-
-if (( $+z4h_win_env )); then
-  export NO_AT_BRIDGE=1
-  export LIBGL_ALWAYS_INDIRECT=1
-  [[ -z $SSH_CONNECTON && $P9K_SSH != 1 && -z $DISPLAY ]] && export DISPLAY=localhost:0.0
-  (( $+z4h_win_home )) && hash -d w=$z4h_win_home
-fi
 
 () {
   local hist
@@ -95,7 +75,7 @@ compdef _default     open
 
 zstyle    ':z4h:ssh:*' enable           yes
 zstyle    ':z4h:ssh:*' ssh-command      command ssh
-zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private' '~/.config/htop/htoprc'
+# zstyle    ':z4h:ssh:*' send-extra-files '~/.zshenv-private' '~/.zshrc-private'
 zstyle -e ':z4h:ssh:*' retrieve-history 'reply=($ZDOTDIR/.zsh_history.${(%):-%m}:$z4h_ssh_host)'
 
 function z4h-ssh-configure() {
@@ -107,7 +87,7 @@ function z4h-ssh-configure() {
   done
 }
 
-[[ -e ~/.ssh/control-master ]] || zf_mkdir -p -m 700 ~/.ssh/control-master
+[[ -e ~/.ssh/s ]] || zf_mkdir -p -m 700 ~/.ssh/s
 
 if [[ -e ~/gitstatus/gitstatus.plugin.zsh ]]; then
   : ${GITSTATUS_LOG_LEVEL=DEBUG}
@@ -116,7 +96,7 @@ fi
 
 () {
   local key keys=(
-    "^B"   "^D"   "^F"   "^N"   "^O"   "^P"   "^Q"   "^S"   "^T"   "^W"
+    "^A"   "^B"   "^D"   "^E"   "^F"   "^N"   "^O"   "^P"   "^Q"   "^S"   "^T"   "^W"
     "^X*"  "^X="  "^X?"  "^XC"  "^XG"  "^Xa"  "^Xc"  "^Xd"  "^Xe"  "^Xg"  "^Xh"  "^Xm"  "^Xn"
     "^Xr"  "^Xs"  "^Xt"  "^Xu"  "^X~"  "^[ "  "^[!"  "^['"  "^[,"  "^[<"  "^[>"  "^[?"
     "^[A"  "^[B"  "^[C"  "^[D"  "^[F"  "^[G"  "^[L"  "^[M"  "^[N"  "^[P"  "^[Q"  "^[S"  "^[T"
@@ -127,6 +107,11 @@ fi
     bindkey $key z4h-do-nothing
   done
 }
+
+if [[ $(command uname) == Darwin ]]; then
+  bindkey "^[[H" beginning-of-line
+  bindkey "^[[F" end-of-line
+fi
 
 z4h bindkey z4h-accept-line         Enter
 z4h bindkey z4h-backward-kill-word  Ctrl+Backspace
@@ -197,9 +182,8 @@ compdef grep_no_cr=grep
 alias grep=grep_no_cr
 
 (( $+commands[tree]  )) && alias tree='tree -a -I .git --dirsfirst'
-(( $+commands[gedit] )) && alias gedit='gedit &>/dev/null'
 (( $+commands[rsync] )) && alias rsync='rsync -rz --info=FLIST,COPY,DEL,REMOVE,SKIP,SYMSAFE,MISC,NAME,PROGRESS,STATS'
-(( $+commands[exa]   )) && alias exa='exa -ga --group-directories-first --time-style=long-iso --color-scale'
+(( $+commands[eza]   )) && alias eza='eza -Agh --classify=auto --smart-group --group-directories-first --no-quotes --time-style=long-iso --color=auto --color-scale=all --color-scale-mode=gradient --icons=auto --git --git-repos'
 
 if [[ -v commands[xclip] && -n $DISPLAY ]]; then
   function x() xclip -selection clipboard -in

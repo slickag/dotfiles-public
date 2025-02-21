@@ -1,15 +1,15 @@
 [user]
-	name = Roman Perepelitsa
-	email = roman.perepelitsa@gmail.com
-	signingKey = 8B060F8B9EB395614A669F2A90ACE942EB90C3DD
-[diff]
-	tool = meld
-[merge]
-	tool = meld
-[difftool]
-	prompt = false
+	name = AG
+	email = slick@noreply.statik.win
+	signingKey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILP1MgdIzOQPN8r9wniNXlhTIHNl80PkvXXpvsZbVesJ
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[commit]
+	gpgsign = true
 [core]
-	pager = diff-so-fancy | less -RFXMx4
+#	pager = diff-so-fancy | less -RFXMx4
 	untrackedCache = true
 [color]
 	ui = true
@@ -31,6 +31,6 @@
 [rebase]
 	autoStash = true
 [alias]
-  patch = apply --ignore-space-change --ignore-whitespace
+	patch = apply --ignore-space-change --ignore-whitespace
 [init]
-  defaultBranch = master
+	defaultBranch = main
