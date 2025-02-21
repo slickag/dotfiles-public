@@ -5,8 +5,10 @@ HISTSIZE=1000000000
 HISTFILESIZE=1000000000
 HISTFILE="$HOME"/.bash_history
 
+export EDITOR=nano
 export LS_COLORS='rs=0:no=00:mi=00:mh=00:ln=01;36:or=01;31:di=01;34:ow=04;01;34:st=34:tw=04;34:'
 LS_COLORS+='pi=01;33:so=01;33:do=01;33:bd=01;33:cd=01;33:su=01;35:sg=01;35:ca=01;35:ex=01;32:'
+export QT_QPA_PLATFORM=wayland
 
 shopt -s histappend
 shopt -s checkwinsize
@@ -19,9 +21,15 @@ fi
 alias diff='diff --color=auto'
 alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
 alias clang-format='clang-format -style=file'
-alias ls='ls --color=auto --group-directories-first'
+alias eza='eza -Agh --classify=auto --smart-group --group-directories-first --no-quotes --time-style=long-iso --color=auto --color-scale=all --color-scale-mode=gradient --icons=auto --git --git-repos'
+alias l='eza -lH'
+alias la='lsd -SAFlr --total-size --group-dirs none'
+alias ll='lsd -SAFl --total-size --group-dirs none'
+alias ls='ls -A --color=auto --group-directories-first'
+alias lt='ls -T'
 alias tree='tree -aC -I .git --dirsfirst'
 alias gedit='gedit &>/dev/null'
+alias sudo='sudo -H '
 
 alias x='xclip -selection clipboard -in'          # cut to clipboard
 alias v='xclip -selection clipboard -out'         # paste from clipboard
@@ -44,3 +52,26 @@ else
 fi
 
 PROMPT_DIRTRIM=3
+
+[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+
+[ -d "$HOME/.cargo" ] && . "$HOME/.cargo/env"
+
+[ -d "$HOME/.nvm" ] && export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+if [ -d "$HOME/.cargo/bin" ] ; then
+    [ "${PATH#*$HOME/.cargo/bin:}" == "$PATH" ] && export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+if [ -d "$HOME/.local/bin" ] ; then
+    [ "${PATH#*$HOME/.local/bin:}" == "$PATH" ] && export PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -d "$HOME/bin" ] ; then
+    [ "${PATH#*$HOME/bin:}" == "$PATH" ] && export PATH="$HOME/bin:$PATH"
+fi
+
+# Eliminate duplicate PATH entries if any.
+# export PATH=$(echo $PATH | awk -v RS=: -v ORS=: '!($0 in a) {a[$0]; print}' | sed -e 's|.*:$||')
