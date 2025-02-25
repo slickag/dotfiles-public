@@ -1,6 +1,6 @@
 [user]
 	name = AG
-	email = slick@noreply.statik.win
+	email = AG@miMac.lan
 	signingKey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILP1MgdIzOQPN8r9wniNXlhTIHNl80PkvXXpvsZbVesJ
 [gpg]
 	format = ssh
