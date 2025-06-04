@@ -178,7 +178,7 @@ alias grep=grep_no_cr
 
 (( $+commands[tree]  )) && alias tree='tree -a -I .git --dirsfirst'
 (( $+commands[rsync] )) && alias rsync='rsync -rz --info=FLIST,COPY,DEL,REMOVE,SKIP,SYMSAFE,MISC,NAME,PROGRESS,STATS'
-(( $+commands[eza]   )) && alias eza='eza -Agh --classify=auto --smart-group --group-directories-first --no-quotes --time-style=long-iso --color=auto --color-scale=all --color-scale-mode=gradient --icons=auto --git --git-repos'
+(( $+commands[eza]   )) && alias eza='eza -Agh --classify=auto --smart-group --group-directories-first --no-quotes --time-style=long-iso --color=auto --color-scale=all --color-scale-mode=gradient --icons=auto'
 
 if [[ -v commands[xclip] && -n $DISPLAY ]]; then
   function x() xclip -selection clipboard -in
