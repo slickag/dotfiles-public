@@ -15,6 +15,11 @@ zstyle ':z4h:'                start-tmux             no
 # zstyle ':z4h:'                start-tmux             command tmux -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
 
+if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+fi
+
 # if [[ -e ~/.ssh/id_rsa ]]; then
   # zstyle ':z4h:ssh-agent:' start      no
   # zstyle ':z4h:ssh-agent:' extra-args -t 20h
