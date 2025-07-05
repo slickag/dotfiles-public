@@ -11,14 +11,11 @@ zstyle ':z4h:'                  propagate-cwd          yes
 zstyle ':z4h:'                  prompt-height          4
 
 zstyle ':z4h:direnv'          enable                 no
-zstyle ':z4h:'                start-tmux             no
-# zstyle ':z4h:'                start-tmux             command tmux -u new -A -D -t z4h
+zstyle ':z4h:'                start-tmux             yes
+zstyle ':z4h:'                start-tmux             'integrated'
+zstyle ':z4h:'                prompt-at-bottom       yes
+# zstyle ':z4h:'                start-tmux             command "$HOME/.cache/zsh4humans/v5/tmux/bin/tmux" -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
-
-if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-  . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-fi
 
 # if [[ -e ~/.ssh/id_rsa ]]; then
   # zstyle ':z4h:ssh-agent:' start      no
@@ -153,7 +150,7 @@ zstyle ':completion:*'                       sort               false
 zstyle ':completion:*:ls:*'                  list-dirs-first    true
 zstyle ':completion:*:ssh:argument-1:'       tag-order          hosts users
 zstyle ':completion:*:scp:argument-rest:'    tag-order          hosts files users
-zstyle ':completion:*:(ssh|scp):*:hosts' hosts
+zstyle ':completion:*:(ssh|scp):*:hosts'     hosts
 
 alias '$'=' '
 alias '%'=' '
