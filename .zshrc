@@ -11,9 +11,9 @@ zstyle ':z4h:'                  propagate-cwd          yes
 zstyle ':z4h:'                  prompt-height          4
 
 zstyle ':z4h:direnv'          enable                 no
-zstyle ':z4h:'                start-tmux             yes
-zstyle ':z4h:'                start-tmux             'integrated'
-zstyle ':z4h:'                prompt-at-bottom       yes
+zstyle ':z4h:'                start-tmux             no
+# zstyle ':z4h:'                start-tmux             'integrated'
+# zstyle ':z4h:'                prompt-at-bottom       yes
 # zstyle ':z4h:'                start-tmux             command "$HOME/.cache/zsh4humans/v5/tmux/bin/tmux" -u new -A -D -t z4h
 # zstyle ':z4h:'                term-vresize           top
 
