@@ -67,11 +67,9 @@ function -sync-dotfiles-repo() {
   -sync-dotfiles-repo || return
 
   GIT_DIR=~/.dotfiles-private
-  # local hist=${ZDOTDIR:-~}/.zsh_history.${(%):-%m}
-  # local -U hist=($hist{,:*}(N))
-  local hist=${ZDOTDIR:-~}/.zsh_history.mi
-  local -U hist=($hist{,*}(N))
-  # [[ -f ${HISTFILE:-} ]] && hist+=($HISTFILE)
+  local hist=${ZDOTDIR:-~}/.zsh_history.${(%):-%m}
+  local -U hist=($hist{,:*}(N))
+  [[ -f ${HISTFILE:-} ]] && hist+=($HISTFILE)
   if (( $#hist )); then
     git add -- $hist || return
     local s
