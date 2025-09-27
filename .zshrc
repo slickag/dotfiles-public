@@ -48,17 +48,16 @@ setopt rm_star_silent rc_quotes glob_star_short
 
 fpath=($Z4H/romkatv/archive $fpath)
 [[ -d ~/dotfiles/functions ]] && fpath=(~/dotfiles/functions $fpath)
-[[ -d /opt/homebrew/share/zsh-completions ]] && fpath=(/opt/homebrew/share/zsh-completions $fpath)
-[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || true)"
 
-autoload -Uz -- zmv archive lsarchive unarchive ~/dotfiles/functions/[^_]*(N:t) /opt/homebrew/share/zsh-completions/*(N:t)
+autoload -Uz -- zmv archive lsarchive unarchive ~/dotfiles/functions/[^_]*(N:t)
 
 export VISUAL=${${commands[nano]:t}:-vi}
 
 export EDITOR=$VISUAL
 export GPG_TTY=$TTY
 export PAGER=less
-[[ -d "$(brew --prefix go)" ]] && export GOPATH=$HOME/go
+[[ $(whence go) ]] && export GOPATH=$HOME/go
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export HOMEBREW_NO_ANALYTICS=1
 export MANOPT=--no-hyphenation
@@ -164,7 +163,7 @@ fi
 
 function grep_no_cr() {
   emulate -L zsh -o pipe_fail
-  local -a tty base=(grep)
+  local -a tty base=(grep -s)
   if [[ ${${:-grep}:c:A:t} != busybox* ]]; then
     base+=(--exclude-dir={.bzr,CVS,.git,.hg,.svn})
     tty+=(--color=auto --line-buffered)
