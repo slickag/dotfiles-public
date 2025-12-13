@@ -165,7 +165,7 @@ function grep_no_cr() {
   emulate -L zsh -o pipe_fail
   local -a tty base=(grep -s)
   if [[ ${${:-grep}:c:A:t} != busybox* ]]; then
-    base+=(--exclude-dir={.bzr,CVS,.git,.hg,.svn})
+    base+=(-I --exclude-dir={.bzr,CVS,.git,.hg,.svn})
     tty+=(--color=auto --line-buffered)
   fi
   if [[ -t 1 ]]; then
