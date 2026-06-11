@@ -34,3 +34,9 @@
 	patch = apply --ignore-space-change --ignore-whitespace
 [init]
 	defaultBranch = main
+[help]
+	autocorrect = 1
+# [url "git@github.com:"]
+#	insteadOf = https://github.com/
+# [url "git@gist.github.com:"]
+#	insteadOf = https://gist.github.com/
