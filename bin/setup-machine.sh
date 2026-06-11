@@ -186,7 +186,6 @@ function install_docker() {
     sudo apt-get install -y docker.io
   fi
   sudo usermod -aG docker "$USER"
-  pip3 install --user docker-compose
 }
 
 function install_brew() {
@@ -283,12 +282,12 @@ function install_nuget() {
 }
 
 function install_bw() {
-  local v="1.22.1"
+  local v="2026.4.2"
   ! command -v bw &>/dev/null || [[ "$(bw --version)" != "$v" ]] || return 0
   local tmp
   tmp="$(mktemp -d)"
   pushd -- "$tmp"
-  curl -fsSLO "https://github.com/bitwarden/cli/releases/download/v${v}/bw-linux-${v}.zip"
+  curl -fsSLO "https://github.com/bitwarden/clients/releases/download/cli-v${v}/bw-linux-${v}.zip"
   unzip -- "bw-linux-${v}.zip"
   chmod +x bw
   mv bw ~/bin/
@@ -372,7 +371,7 @@ function fix_dbus() {
 }
 
 function patch_ssh() {
-  local v='8.9p1-3ubuntu0.10'
+  local v='8.9p1-3ubuntu0.15'
   local ssh
   ssh="$(which ssh)"
   grep -qF -- 'Warning: Permanently added' "$ssh" || return 0
